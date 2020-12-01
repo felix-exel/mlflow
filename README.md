@@ -5,7 +5,8 @@ Related Blog Post: [https://www.novatec-gmbh.de/blog/mlflow-tracking-von-paramet
 ## Requirements
 - Mlflows MLproject will build a conda environment from the conda.yaml file at runtime. Therefore [Anaconda](https://www.anaconda.com/distribution/) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) must be installed.<br>
 - MLflow must be installed: ```pip install mlflow```
-- MLflow will look for a git executable to track the git commit for every experiment. To disable this: ```export GIT_PYTHON_REFRESH=quiet```
+- MLflow will look for a git executable to track the git commit for every experiment. To disable this:<br>
+```export GIT_PYTHON_REFRESH=quiet```
 ## Quick Start
 #### MLflow Server with Docker
 If docker and docker-compose is installed, use docker-compose.yaml to start a MLflow server and MySQL backend:<br>
