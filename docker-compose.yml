@@ -1,0 +1,32 @@
+﻿version: '3.5'
+
+services:
+    mysql:
+        restart: always
+        image: mysql/mysql-server:5.7.28
+        container_name: mlflow_db
+        ports:
+            - "3306:3306"
+        environment:
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        volumes:
+            - mysql-volume:/var/lib/mysql
+
+    mlflow:
+        restart: always
+        build: .
+        image: mlflow_server
+        container_name: mlflow_server
+        ports:
+            - "5000:5000"
+        volumes:
+            - ./mlruns:/mlruns # local Folder "mlruns" is the Artifact Storage
+        depends_on:
+            - mysql
+        command: --backend-store-uri mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE} --default-artifact-root ./mlruns --host 0.0.0.0
+
+volumes:
+  mysql-volume:

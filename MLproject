@@ -1,0 +1,14 @@
+name: mlflow_example
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      window_length: {type: int, default: 50}
+      future_length: {type: int, default: 5}
+      n_output_features: {type: int, default: 1}
+      batch_size: {type: int, default: 64}
+      learning_rate: {type: float, default: 0.001}
+    command: "python time_series_forecasting_with_mlflow.py --window_length {window_length} --batch_size {batch_size}
+                             --learning_rate {learning_rate} --future_length {future_length} --n_output_features {n_output_features}"
