@@ -1,17 +1,17 @@
 name: mlflow_example
 channels:
-  - defaults
-
+- conda-forge
 dependencies:
-  - python=3.7
-  - nb_conda
-  - pip
-  - pip:
-    - numpy == 1.18.1
-    - pandas == 1.0.5
-    - tensorflow == 2.3.1
-    - python-dotenv==0.14.0
-    - pymysql
-    - click
-    - mlflow == 1.12.0
-    - watermark == 2.0.2
+- python=3.8.18
+- pip<=23.3.1
+- pip:
+  - numpy == 1.18.1
+  - pandas == 1.0.5
+  - tensorflow == 2.3.1
+  - mlflow==2.10.1
+  - protobuf==3.20.3
+  - python-dotenv==0.14.0
+  - watermark==2.4.3
+  - pymysql
+  - click
+

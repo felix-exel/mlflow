@@ -7,6 +7,7 @@ import pandas as pd
 import tensorflow as tf
 import os
 import tensorflow.keras as keras
+from mlflow.data.pandas_dataset import PandasDataset
 from itertools import product
 from dotenv import load_dotenv
 
@@ -132,7 +133,8 @@ def main(window_length, future_length, n_output_features, batch_size, learning_r
 
     # The data includes 'nan' and '?' as a string, both will be imported as numpy nan
     # Note that I will only use the first 2000 rows for the example
-    df = pd.read_csv('./household_power_consumption.txt', sep=';',
+    source_path = './household_power_consumption.txt'
+    df = pd.read_csv(source_path, sep=';',
                      parse_dates={'dt': ['Date', 'Time']}, infer_datetime_format=True,
                      low_memory=False, na_values=['nan', '?'], index_col='dt')
 
@@ -164,7 +166,11 @@ def main(window_length, future_length, n_output_features, batch_size, learning_r
     gpu_devices = tf.config.experimental.list_physical_devices('GPU')
     for device in gpu_devices: tf.config.experimental.set_memory_growth(device, True)
 
+    dataset: PandasDataset = mlflow.data.from_pandas(standardized, source=source_path, targets="Global_active_power")
+
     with mlflow.start_run() as parent_run:
+        mlflow.log_input(dataset, context="training", tags={"version": "1"})
+        
         for params in grid_search_param:
             batch_size = params['batch_size']
             window_length = params['window_length']
@@ -200,15 +206,10 @@ def main(window_length, future_length, n_output_features, batch_size, learning_r
                 model.fit(data_sliding_window, shuffle=True, initial_epoch=0, epochs=10,
                           callbacks=[MlflowLogging()])
 
-                model.save("./tmp")
-
-                mlflow.tensorflow.log_model(tf_saved_model_dir='./tmp',
-                                            tf_meta_graph_tags='serve',
-                                            tf_signature_def_key='serving_default',
+                mlflow.tensorflow.log_model(model=model,
                                             artifact_path='saved_model',
                                             registered_model_name='Electric Power Consumption Forecasting')
 
-                shutil.rmtree("./tmp")
 
 
 if __name__ == "__main__":
